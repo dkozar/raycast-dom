@@ -9,10 +9,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -72,10 +68,6 @@ require('./styles/main.css');
 var rootNode, canvasNode;
 
 //<editor-fold desc="Helper functions">
-function isCircle(target) {
-    return target.id.startsWith('circle');
-}
-
 function getCircleId(circleElement) {
     return parseInt(circleElement.id.split('-')[1]);
 }
@@ -163,16 +155,16 @@ var App = exports.App = function (_Component) {
                 circleId,
                 circleIndex;
 
-            if (!ray.intersects(canvasNode)) {
-                return;
-            }
-
             if (this.state.popupVisible) {
                 if (!ray.intersectsId(_Popup.POPUP_ID)) {
                     this.setState({
                         popupVisible: false
                     });
                 }
+                return;
+            }
+
+            if (!ray.intersects(canvasNode)) {
                 return;
             }
 

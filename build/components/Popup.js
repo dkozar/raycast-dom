@@ -48,7 +48,7 @@ var Popup = function (_Component) {
                     _react2.default.createElement(
                         _reactWrappyText2.default,
                         { className: 'popup-dialog-header' },
-                        'Popup dialog here'
+                        'This is the popup'
                     ),
                     _react2.default.createElement(
                         'div',
@@ -56,24 +56,24 @@ var Popup = function (_Component) {
                         _react2.default.createElement(
                             'p',
                             null,
-                            'Hello, user.'
+                            'Clicking outside this popup will close it.'
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'Clicking inside will keep it open.'
                         ),
                         _react2.default.createElement('br', null),
                         _react2.default.createElement(
                             'p',
                             null,
-                            'Clicking outside this of popup will close it.'
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            null,
-                            'It\'s easy to test a ray against element\'s "outside".'
+                            'With rays, it\'s easy to test an element against clicking outside.'
                         ),
                         _react2.default.createElement('br', null),
                         _react2.default.createElement(
                             'p',
                             { className: 'popup-dialog-content-last' },
-                            'You could visit the GitHub page by clicking the button below.'
+                            'To see the code, visit the project page on GitHub.'
                         ),
                         _react2.default.createElement('br', null)
                     ),
@@ -84,13 +84,13 @@ var Popup = function (_Component) {
                             'button',
                             { className: 'toolbar-button', id: SUBMIT_BUTTON_ID },
                             _react2.default.createElement('span', { className: 'fa fa-github-alt' }),
-                            ' Go to GitHub'
+                            '  Go to GitHub'
                         ),
                         _react2.default.createElement(
                             'button',
                             { className: 'toolbar-button', id: CLOSE_BUTTON_ID },
                             _react2.default.createElement('span', { className: 'fa fa-close' }),
-                            ' Close'
+                            '  Close'
                         )
                     )
                 )

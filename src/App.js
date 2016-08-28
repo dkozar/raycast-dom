@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import BottomToolbar, { NEW_BUTTON_ID, CLEAR_BUTTON_ID, OPEN_BUTTON_ID } from './components/BottomToolbar';
@@ -19,10 +18,6 @@ require('./styles/main.css');
 var rootNode, canvasNode;
 
 //<editor-fold desc="Helper functions">
-function isCircle(target) {
-    return target.id.startsWith('circle');
-}
-
 function getCircleId(circleElement) {
     return parseInt(circleElement.id.split('-')[1]);
 }
@@ -101,16 +96,16 @@ export class App extends Component {
         var self = this,
             circle, circleId, circleIndex;
 
-        if (!ray.intersects(canvasNode)) {
-            return;
-        }
-
         if (this.state.popupVisible) {
             if (!ray.intersectsId(POPUP_ID)) {
                 this.setState({
                     popupVisible: false
                 });
             }
+            return;
+        }
+
+        if (!ray.intersects(canvasNode)) {
             return;
         }
 

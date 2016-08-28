@@ -4,13 +4,12 @@ import WrappyText from 'react-wrappy-text';
 const texts = [
     'This is the Raycast demo.',
     'Home of the circles.',
-    'Click the circle to bring it to the top.',
+    'Click the circle to bring it to top.',
     'Click the background to create new circle.',
-    'Alt + click = new circle',
     'Alt + mouse move = new circle.',
     'Alt + Shift + click = clear screen.',
-    'The "Clear screen" button removes all the circles.',
-    'The "New circle" button creates circle at last click position.'
+    '"Clear screen" button removes all the circles.',
+    '"New circle" button creates the circle at last click position.'
 ];
 
 export default class TextRotator extends Component {
