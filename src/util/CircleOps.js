@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { COLORS } from './colors';
 
 const TOOLBAR_HEIGHT = 0;
@@ -24,6 +25,13 @@ function newCircle(position, circles, yOrigin) {
 
 function removeCircle(circles, current) {
     circles.splice(current, 1);
+}
+
+function moveCircles(circles, delta) {
+    _.forEach(circles, function(circle) {
+        circle.x += delta.x;
+        circle.y += delta.y;
+    });
 }
 
 function clear(circles) {
@@ -73,6 +81,9 @@ export default class CircleOps {
                 break;
             case 'remove-circle':
                 removeCircle(circles, current);
+                break;
+            case 'move':
+                moveCircles(circles, position);
                 break;
             case 'clear':
                 clear(circles);

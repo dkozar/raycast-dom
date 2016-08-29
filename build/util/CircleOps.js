@@ -6,7 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _colors = require('./colors');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -34,6 +40,13 @@ function newCircle(position, circles, yOrigin) {
 
 function removeCircle(circles, current) {
     circles.splice(current, 1);
+}
+
+function moveCircles(circles, delta) {
+    _lodash2.default.forEach(circles, function (circle) {
+        circle.x += delta.x;
+        circle.y += delta.y;
+    });
 }
 
 function clear(circles) {
@@ -90,6 +103,9 @@ var CircleOps = function () {
                     break;
                 case 'remove-circle':
                     removeCircle(circles, current);
+                    break;
+                case 'move':
+                    moveCircles(circles, position);
                     break;
                 case 'clear':
                     clear(circles);

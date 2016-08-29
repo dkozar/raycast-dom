@@ -22,7 +22,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var texts = ['This is the Raycast demo.', 'Home of the circles.', 'Click the circle to bring it to top.', 'Click the background to create new circle.', 'Alt + mouse move = new circle.', 'Alt + Shift + click = clear screen.', '"Clear screen" button removes all the circles.', '"New circle" button creates the circle at last click position.'];
+var texts = ['This is the Raycast demo.', 'Home of the circles.', 'Click the circle to bring it to top.', 'Click the background to create new circle.', 'Shift + click = clear screen.', 'Alt + click + mouse move = new circle.', '"Clear screen" button removes all the circles.', '"New circle" button creates the circle at last click position.'];
 
 var TextRotator = function (_Component) {
     _inherits(TextRotator, _Component);

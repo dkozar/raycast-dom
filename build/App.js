@@ -37,6 +37,10 @@ var _Logo = require('./components/Logo');
 
 var _Logo2 = _interopRequireDefault(_Logo);
 
+var _Point = require('./util/Point');
+
+var _Point2 = _interopRequireDefault(_Point);
+
 var _Popup = require('./components/Popup');
 
 var _Popup2 = _interopRequireDefault(_Popup);
@@ -92,6 +96,7 @@ var App = exports.App = function (_Component) {
             }],
             hoveredCircleIndex: -1,
             selectedCircleIndex: -1,
+            draggedCircleIndex: -1,
             popupVisible: false,
             mousePosition: {
                 x: 0,
@@ -109,6 +114,7 @@ var App = exports.App = function (_Component) {
             onMouseDown: _this.onMouseDown.bind(_this), // drawing circles
             onMouseUp: _this.onMouseUp.bind(_this), // stop drawing circles with Alt key
             onClick: _this.onClick.bind(_this), // button clicks
+            onKeyDown: _this.onKeyDown.bind(_this), // stop dragging
             onKeyUp: _this.onKeyUp.bind(_this), // closing dialog
             onTouchStart: _this.onTouchStart.bind(_this) // new circle
         });
@@ -156,16 +162,18 @@ var App = exports.App = function (_Component) {
                 circleIndex;
 
             if (this.state.popupVisible) {
+                // popup is visible
                 if (!ray.intersectsId(_Popup.POPUP_ID)) {
+                    // clicked outside the popup
                     this.setState({
                         popupVisible: false
                     });
                 }
-                return;
+                return; // return because popup currently visible
             }
 
             if (!ray.intersects(canvasNode)) {
-                return;
+                return; // clicked outside the canvas
             }
 
             circle = ray.intersectsId(_Circle.CIRCLE_ID_PREFIX);
@@ -175,40 +183,35 @@ var App = exports.App = function (_Component) {
                 circleId = circle.id;
                 circleIndex = parseInt(circleId.split(_Circle.CIRCLE_ID_PREFIX)[1]);
                 this.setState({
-                    selectedCircleIndex: circleIndex
+                    mouseIsDown: true,
+                    selectedCircleIndex: circleIndex,
+                    draggedCircleIndex: circleIndex,
+                    dragOrigin: ray.position
                 }, function () {
                     self.executeCommand('bring-to-front');
-                    self.selectLastCircle();
+                    self.selectCircleOnTop();
                 });
-            } else {
-                // canvas mouse down
-                this.setState({
-                    mousePosition: ray.position,
-                    selectedCircleIndex: -1
-                }, function () {
-                    self.executeCommand('new-circle');
-                    self.selectLastCircle();
-                });
+                return;
             }
 
+            // canvas mouse down
             this.setState({
                 mouseIsDown: true,
-                mousePosition: ray.position
+                mousePosition: ray.position,
+                selectedCircleIndex: -1,
+                draggedCircleIndex: -1
             }, function () {
-                if (ray.e.altKey) {
-                    if (ray.e.shiftKey) {
-                        self.executeCommand('clear'); // Alt + Shift + click = clear
-                    } else if (ray.intersects(canvasNode)) {
-                        self.executeCommand('new-circle'); // Alt + click = new circle
-                        self.selectLastCircle();
-                    }
+                if (ray.e.shiftKey) {
+                    // Shift + click = clear screen
+                    self.executeCommand('clear');
                 }
+                self.executeCommand('new-circle'); // create new circle
+                self.selectCircleOnTop(); // select it
             });
         }
     }, {
         key: 'onTouchStart',
         value: function onTouchStart(ray) {
-            console.log('onTouchStart', ray);
             var touch = ray.e.changedTouches[0];
 
             ray.position = {
@@ -220,24 +223,41 @@ var App = exports.App = function (_Component) {
     }, {
         key: 'onMouseUp',
         value: function onMouseUp() {
+            if (this.state.delta) {
+                // save positions
+                _CircleOps2.default.executeCommand('move', this.state.circles, null, this.state.delta);
+            }
             this.setState({
-                mouseIsDown: false
+                mouseIsDown: false,
+                delta: null
             });
         }
     }, {
         key: 'onMouseMove',
         value: function onMouseMove(ray) {
-            var self = this;
+            var self = this,
+                position = ray.position;
 
-            if (!ray.e.altKey || !this.state.mouseIsDown || !ray.intersects(canvasNode)) {
+            if (!this.state.mouseIsDown || !ray.intersects(canvasNode)) {
                 return;
             }
 
-            this.setState({
-                mousePosition: ray.position
-            }, function () {
-                self.executeCommand('new-circle'); // Alt + mouse move = new circle
-            });
+            if (ray.e.altKey) {
+                // Alt + mouse move = new circle
+                this.setState({
+                    mousePosition: position
+                }, function () {
+                    self.executeCommand('new-circle');
+                });
+                return;
+            }
+
+            if (this.state.draggedCircleIndex > -1 && this.state.mouseIsDown) {
+                // clicking and dragging a single circle moves all the circles
+                this.setState({
+                    delta: _Point2.default.fromObject(position).subtract(this.state.dragOrigin)
+                });
+            }
         }
     }, {
         key: 'onClick',
@@ -261,6 +281,17 @@ var App = exports.App = function (_Component) {
             }
         }
     }, {
+        key: 'onKeyDown',
+        value: function onKeyDown(ray) {
+            if (ray.e.key === 'Escape') {
+                // stop dragging circles
+                this.setState({
+                    draggedCircleIndex: -1,
+                    delta: null
+                });
+            }
+        }
+    }, {
         key: 'onKeyUp',
         value: function onKeyUp(ray) {
             if (ray.e.key === 'Escape') {
@@ -280,8 +311,8 @@ var App = exports.App = function (_Component) {
             this.state.selectedCircleIndex = getCircleId(circleElement);
         }
     }, {
-        key: 'selectLastCircle',
-        value: function selectLastCircle() {
+        key: 'selectCircleOnTop',
+        value: function selectCircleOnTop() {
             this.setState({
                 selectedCircleIndex: this.state.circles.length - 1
             });
@@ -303,10 +334,18 @@ var App = exports.App = function (_Component) {
         key: 'render',
         value: function render() {
             var self = this,
+                delta = self.state.delta,
                 index = 0,
                 circles = this.state.circles.map(function (item) {
                 var id = _Circle.CIRCLE_ID_PREFIX + index,
-                    circle = _react2.default.createElement(_Circle2.default, _extends({}, item, {
+                    coords,
+                    circle;
+
+                if (delta) {
+                    coords = _Point2.default.fromObject(item).add(delta).toObject();
+                }
+
+                circle = _react2.default.createElement(_Circle2.default, _extends({}, item, coords, {
                     id: id,
                     key: id,
                     strokeColor: 'white',
