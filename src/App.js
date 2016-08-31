@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import BottomToolbar, { NEW_BUTTON_ID, CLEAR_BUTTON_ID, OPEN_BUTTON_ID } from './components/BottomToolbar';
+import AboutPopup, { ABOUT_POPUP_ID, GITHUB_BUTTON_ID } from './components/AboutPopup';
+import BottomToolbar, { NEW_BUTTON_ID, CLEAR_BUTTON_ID, OPEN_BUTTON_ID, STAR_BUTTON_ID } from './components/BottomToolbar';
 import Circle from './components/Circle';
 import { CIRCLE_ID_PREFIX } from './components/Circle';
 import CircleOps from './util/CircleOps';
+import CursorOverlay from './components/CursorOverlay';
 import Emitter from './Emitter';
 import Logo from './components/Logo';
 import Point from './util/Point';
-import Popup, { POPUP_ID, CLOSE_BUTTON_ID, SUBMIT_BUTTON_ID } from './components/Popup';
+import ExamplePopup, { EXAMPLE_POPUP_ID, CLOSE_BUTTON_ID } from './components/ExamplePopup';
 import Svg from './components/Svg';
 import TextRotator from './components/TextRotator';
 import WrappyText from 'react-wrappy-text';
@@ -15,6 +17,9 @@ import WrappyText from 'react-wrappy-text';
 import { BLUE, YELLOW, PURPLE } from './util/colors';
 
 require('./styles/main.css');
+
+const GITHUB_URL = 'https://github.com/dkozar/raycast-dom',
+      STARS_URL = GITHUB_URL + '/stargazers';
 
 var rootNode, canvasNode;
 
@@ -45,7 +50,7 @@ export class App extends Component {
             hoveredCircleIndex: -1,
             selectedCircleIndex: -1,
             draggedCircleIndex: -1,
-            popupVisible: false,
+            popupVisible: ABOUT_POPUP_ID,
             mousePosition: {
                 x: 0,
                 y: 0
@@ -64,7 +69,8 @@ export class App extends Component {
             onClick: this.onClick.bind(this), // button clicks
             onKeyDown: this.onKeyDown.bind(this), // stop dragging
             onKeyUp: this.onKeyUp.bind(this), // closing dialog
-            onTouchStart: this.onTouchStart.bind(this) // new circle
+            onTouchStart: this.onTouchStart.bind(this), // new circle
+            onTouchEnd: this.onTouchEnd.bind(this)
         });
     }
     //</editor-fold>
@@ -95,12 +101,16 @@ export class App extends Component {
         }
     }
 
-    onMouseDown(ray) {
+    handleMouseOrTouchDown(ray, isTouch) {
         var self = this,
             circle, circleId, circleIndex;
 
+        this.setState({ // immediately reset cursor overlay
+            mouseIsDown: true
+        });
+
         if (this.state.popupVisible) { // popup is visible
-            if (!ray.intersectsId(POPUP_ID)) { // clicked outside the popup
+            if (!ray.intersectsId(EXAMPLE_POPUP_ID) && !ray.intersectsId(ABOUT_POPUP_ID)) { // clicked outside the popup
                 this.setState({
                     popupVisible: false
                 });
@@ -118,9 +128,8 @@ export class App extends Component {
             circleId = circle.id;
             circleIndex = parseInt(circleId.split(CIRCLE_ID_PREFIX)[1]);
             this.setState({
-                mouseIsDown: true,
                 selectedCircleIndex: circleIndex,
-                draggedCircleIndex: circleIndex,
+                draggedCircleIndex: isTouch ? -1 : circleIndex,
                 dragOrigin: ray.position
             }, function() {
                 self.executeCommand('bring-to-front');
@@ -131,7 +140,6 @@ export class App extends Component {
 
         // canvas mouse down
         this.setState({
-            mouseIsDown: true,
             mousePosition: ray.position,
             selectedCircleIndex: -1,
             draggedCircleIndex: -1
@@ -144,6 +152,10 @@ export class App extends Component {
         });
     }
 
+    onMouseDown(ray) {
+        this.handleMouseOrTouchDown(ray);
+    }
+
     onTouchStart(ray) {
         var touch = ray.e.changedTouches[0];
 
@@ -151,7 +163,7 @@ export class App extends Component {
             x: touch.clientX,
             y: touch.clientY
         };
-        this.onMouseDown(ray);
+        this.handleMouseOrTouchDown(ray, true);
     }
 
     onMouseUp() {
@@ -161,6 +173,15 @@ export class App extends Component {
         }
         this.setState({
             mouseIsDown: false,
+            draggedCircleIndex: -1,
+            delta: null
+        });
+    }
+
+    onTouchEnd(ray) {
+        this.setState({
+            mouseIsDown: false,
+            draggedCircleIndex: -1,
             delta: null
         });
     }
@@ -169,11 +190,11 @@ export class App extends Component {
         var self = this,
             position = ray.position;
 
-        if (!this.state.mouseIsDown || !ray.intersects(canvasNode)) {
-            return;
+        if (!this.state.mouseIsDown) {
+            return; // nothing to do here
         }
 
-        if (ray.e.altKey) { // Alt + mouse move = new circle
+        if (ray.e.altKey && ray.intersects(rootNode)) { // Alt + mouse move = new circle
             this.setState({
                 mousePosition: position
             }, function() {
@@ -182,7 +203,7 @@ export class App extends Component {
             return;
         }
 
-        if (this.state.draggedCircleIndex > -1 && this.state.mouseIsDown) {
+        if (this.state.draggedCircleIndex > -1) {
             // clicking and dragging a single circle moves all the circles
             this.setState({
                 delta: Point.fromObject(position).subtract(this.state.dragOrigin)
@@ -199,14 +220,16 @@ export class App extends Component {
             self.executeCommand('clear');
         } else if (ray.intersectsId(OPEN_BUTTON_ID)) {
             self.setState({
-                popupVisible: true
+                popupVisible: EXAMPLE_POPUP_ID
             });
         } else if (ray.intersectsId(CLOSE_BUTTON_ID)) {
             self.setState({
                 popupVisible: false
             });
-        } else if (ray.intersectsId(SUBMIT_BUTTON_ID)) {
-            window.open('https://github.com/dkozar/raycast-dom', '_blank');
+        } else if (ray.intersectsId(GITHUB_BUTTON_ID)) {
+            window.open(GITHUB_URL, '_blank');
+        } else if (ray.intersectsId(STAR_BUTTON_ID)) {
+            window.open(STARS_URL, '_blank');
         }
     }
 
@@ -220,7 +243,7 @@ export class App extends Component {
     }
 
     onKeyUp(ray) {
-        if (ray.e.key === 'Escape') { // close dialog
+        if (ray.e.key === 'Escape') { // close the popup
             this.setState({
                 popupVisible: false
             });
@@ -273,8 +296,13 @@ export class App extends Component {
                 index++;
                 return circle;
             }),
-            popup = this.state.popupVisible && (
-                <Popup />
+            popup = this.state.popupVisible === ABOUT_POPUP_ID && (
+                <AboutPopup />
+            ) || this.state.popupVisible === EXAMPLE_POPUP_ID && (
+                    <ExamplePopup />
+                ),
+            cursorOverlay = this.state.mouseIsDown && this.state.draggedCircleIndex > -1 && (
+                <CursorOverlay />
             );
 
         return (
@@ -288,6 +316,7 @@ export class App extends Component {
                     {popup}
                 </div>
                 <BottomToolbar />
+                {cursorOverlay}
             </div>
         );
     }

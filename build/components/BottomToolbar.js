@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.OPEN_BUTTON_ID = exports.CLEAR_BUTTON_ID = exports.NEW_BUTTON_ID = undefined;
+exports.STAR_BUTTON_ID = exports.OPEN_BUTTON_ID = exports.CLEAR_BUTTON_ID = exports.NEW_BUTTON_ID = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -22,6 +22,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var NEW_BUTTON_ID = exports.NEW_BUTTON_ID = 'new-circle';
 var CLEAR_BUTTON_ID = exports.CLEAR_BUTTON_ID = 'clear';
 var OPEN_BUTTON_ID = exports.OPEN_BUTTON_ID = 'open-popup';
+var STAR_BUTTON_ID = exports.STAR_BUTTON_ID = 'star';
 
 var BottomToolbar = function (_Component) {
     _inherits(BottomToolbar, _Component);
@@ -43,7 +44,7 @@ var BottomToolbar = function (_Component) {
                     'button',
                     { id: CLEAR_BUTTON_ID, className: 'toolbar-button' },
                     _react2.default.createElement('i', { className: 'fa fa-remove' }),
-                    '  Clear screen'
+                    '  Clear'
                 ),
                 _react2.default.createElement(
                     'button',
@@ -56,6 +57,11 @@ var BottomToolbar = function (_Component) {
                     { id: OPEN_BUTTON_ID, className: 'toolbar-button' },
                     _react2.default.createElement('i', { className: 'fa fa-info-circle' }),
                     '  Open popup'
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { id: STAR_BUTTON_ID, className: 'toolbar-button toolbar-button-right' },
+                    _react2.default.createElement('i', { className: 'fa fa-star' })
                 )
             );
         }

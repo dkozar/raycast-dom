@@ -36,7 +36,16 @@ var Logo = function (_Component) {
                 _react2.default.createElement(
                     'div',
                     { className: 'logo' },
-                    'Raycast DOM'
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'logo-title' },
+                        'Raycast demo'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'logo-subtitle' },
+                        '[ touch the screen ]'
+                    )
                 )
             );
         }

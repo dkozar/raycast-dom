@@ -10,10 +10,6 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactWrappyText = require('react-wrappy-text');
-
-var _reactWrappyText2 = _interopRequireDefault(_reactWrappyText);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22,57 +18,26 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var texts = ['This is the Raycast demo.', 'Home of the circles.', 'Click the circle to bring it to the top.', 'Click the background to create new circle.', 'Click and drag the circle to move all the circles.', 'Shift + click = clear screen', 'Alt + click + mouse move = new circle', '"Clear" button removes all the circles.', '"New circle" button creates the circle at last click position.'];
+/**
+ * Changes the cursor when visible
+ */
+var CursorOverlay = function (_Component) {
+    _inherits(CursorOverlay, _Component);
 
-var TextRotator = function (_Component) {
-    _inherits(TextRotator, _Component);
+    function CursorOverlay() {
+        _classCallCheck(this, CursorOverlay);
 
-    function TextRotator(props) {
-        _classCallCheck(this, TextRotator);
-
-        var _this = _possibleConstructorReturn(this, (TextRotator.__proto__ || Object.getPrototypeOf(TextRotator)).call(this, props));
-
-        _this.state = {
-            index: 0,
-            text: texts[0]
-        };
-
-        _this.start();
-        return _this;
+        return _possibleConstructorReturn(this, (CursorOverlay.__proto__ || Object.getPrototypeOf(CursorOverlay)).apply(this, arguments));
     }
 
-    _createClass(TextRotator, [{
-        key: 'start',
-        value: function start() {
-            var _this2 = this;
-
-            this.interval = setInterval(function () {
-                var index = (_this2.state.index + 1) % texts.length;
-
-                _this2.setState({
-                    index: index,
-                    text: texts[index]
-                });
-            }, 5000);
-        }
-    }, {
-        key: 'stop',
-        value: function stop() {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
-    }, {
+    _createClass(CursorOverlay, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement(
-                _reactWrappyText2.default,
-                { className: 'wrappy' },
-                this.state.text
-            );
+            return _react2.default.createElement('div', { className: 'cursor-overlay' });
         }
     }]);
 
-    return TextRotator;
+    return CursorOverlay;
 }(_react.Component);
 
-exports.default = TextRotator;
+exports.default = CursorOverlay;

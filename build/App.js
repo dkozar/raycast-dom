@@ -17,6 +17,10 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _AboutPopup = require('./components/AboutPopup');
+
+var _AboutPopup2 = _interopRequireDefault(_AboutPopup);
+
 var _BottomToolbar = require('./components/BottomToolbar');
 
 var _BottomToolbar2 = _interopRequireDefault(_BottomToolbar);
@@ -28,6 +32,10 @@ var _Circle2 = _interopRequireDefault(_Circle);
 var _CircleOps = require('./util/CircleOps');
 
 var _CircleOps2 = _interopRequireDefault(_CircleOps);
+
+var _CursorOverlay = require('./components/CursorOverlay');
+
+var _CursorOverlay2 = _interopRequireDefault(_CursorOverlay);
 
 var _Emitter = require('./Emitter');
 
@@ -41,9 +49,9 @@ var _Point = require('./util/Point');
 
 var _Point2 = _interopRequireDefault(_Point);
 
-var _Popup = require('./components/Popup');
+var _ExamplePopup = require('./components/ExamplePopup');
 
-var _Popup2 = _interopRequireDefault(_Popup);
+var _ExamplePopup2 = _interopRequireDefault(_ExamplePopup);
 
 var _Svg = require('./components/Svg');
 
@@ -68,6 +76,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 require('./styles/main.css');
+
+var GITHUB_URL = 'https://github.com/dkozar/raycast-dom',
+    STARS_URL = GITHUB_URL + '/stargazers';
 
 var rootNode, canvasNode;
 
@@ -97,7 +108,7 @@ var App = exports.App = function (_Component) {
             hoveredCircleIndex: -1,
             selectedCircleIndex: -1,
             draggedCircleIndex: -1,
-            popupVisible: false,
+            popupVisible: _AboutPopup.ABOUT_POPUP_ID,
             mousePosition: {
                 x: 0,
                 y: 0
@@ -116,7 +127,8 @@ var App = exports.App = function (_Component) {
             onClick: _this.onClick.bind(_this), // button clicks
             onKeyDown: _this.onKeyDown.bind(_this), // stop dragging
             onKeyUp: _this.onKeyUp.bind(_this), // closing dialog
-            onTouchStart: _this.onTouchStart.bind(_this) // new circle
+            onTouchStart: _this.onTouchStart.bind(_this), // new circle
+            onTouchEnd: _this.onTouchEnd.bind(_this)
         });
         return _this;
     }
@@ -154,16 +166,20 @@ var App = exports.App = function (_Component) {
             }
         }
     }, {
-        key: 'onMouseDown',
-        value: function onMouseDown(ray) {
+        key: 'handleMouseOrTouchDown',
+        value: function handleMouseOrTouchDown(ray, isTouch) {
             var self = this,
                 circle,
                 circleId,
                 circleIndex;
 
+            this.setState({ // immediately reset cursor overlay
+                mouseIsDown: true
+            });
+
             if (this.state.popupVisible) {
                 // popup is visible
-                if (!ray.intersectsId(_Popup.POPUP_ID)) {
+                if (!ray.intersectsId(_ExamplePopup.EXAMPLE_POPUP_ID) && !ray.intersectsId(_AboutPopup.ABOUT_POPUP_ID)) {
                     // clicked outside the popup
                     this.setState({
                         popupVisible: false
@@ -183,9 +199,8 @@ var App = exports.App = function (_Component) {
                 circleId = circle.id;
                 circleIndex = parseInt(circleId.split(_Circle.CIRCLE_ID_PREFIX)[1]);
                 this.setState({
-                    mouseIsDown: true,
                     selectedCircleIndex: circleIndex,
-                    draggedCircleIndex: circleIndex,
+                    draggedCircleIndex: isTouch ? -1 : circleIndex,
                     dragOrigin: ray.position
                 }, function () {
                     self.executeCommand('bring-to-front');
@@ -196,7 +211,6 @@ var App = exports.App = function (_Component) {
 
             // canvas mouse down
             this.setState({
-                mouseIsDown: true,
                 mousePosition: ray.position,
                 selectedCircleIndex: -1,
                 draggedCircleIndex: -1
@@ -210,6 +224,11 @@ var App = exports.App = function (_Component) {
             });
         }
     }, {
+        key: 'onMouseDown',
+        value: function onMouseDown(ray) {
+            this.handleMouseOrTouchDown(ray);
+        }
+    }, {
         key: 'onTouchStart',
         value: function onTouchStart(ray) {
             var touch = ray.e.changedTouches[0];
@@ -218,7 +237,7 @@ var App = exports.App = function (_Component) {
                 x: touch.clientX,
                 y: touch.clientY
             };
-            this.onMouseDown(ray);
+            this.handleMouseOrTouchDown(ray, true);
         }
     }, {
         key: 'onMouseUp',
@@ -229,6 +248,16 @@ var App = exports.App = function (_Component) {
             }
             this.setState({
                 mouseIsDown: false,
+                draggedCircleIndex: -1,
+                delta: null
+            });
+        }
+    }, {
+        key: 'onTouchEnd',
+        value: function onTouchEnd(ray) {
+            this.setState({
+                mouseIsDown: false,
+                draggedCircleIndex: -1,
                 delta: null
             });
         }
@@ -238,11 +267,11 @@ var App = exports.App = function (_Component) {
             var self = this,
                 position = ray.position;
 
-            if (!this.state.mouseIsDown || !ray.intersects(canvasNode)) {
-                return;
+            if (!this.state.mouseIsDown) {
+                return; // nothing to do here
             }
 
-            if (ray.e.altKey) {
+            if (ray.e.altKey && ray.intersects(rootNode)) {
                 // Alt + mouse move = new circle
                 this.setState({
                     mousePosition: position
@@ -252,7 +281,7 @@ var App = exports.App = function (_Component) {
                 return;
             }
 
-            if (this.state.draggedCircleIndex > -1 && this.state.mouseIsDown) {
+            if (this.state.draggedCircleIndex > -1) {
                 // clicking and dragging a single circle moves all the circles
                 this.setState({
                     delta: _Point2.default.fromObject(position).subtract(this.state.dragOrigin)
@@ -270,14 +299,16 @@ var App = exports.App = function (_Component) {
                 self.executeCommand('clear');
             } else if (ray.intersectsId(_BottomToolbar.OPEN_BUTTON_ID)) {
                 self.setState({
-                    popupVisible: true
+                    popupVisible: _ExamplePopup.EXAMPLE_POPUP_ID
                 });
-            } else if (ray.intersectsId(_Popup.CLOSE_BUTTON_ID)) {
+            } else if (ray.intersectsId(_ExamplePopup.CLOSE_BUTTON_ID)) {
                 self.setState({
                     popupVisible: false
                 });
-            } else if (ray.intersectsId(_Popup.SUBMIT_BUTTON_ID)) {
-                window.open('https://github.com/dkozar/raycast-dom', '_blank');
+            } else if (ray.intersectsId(_AboutPopup.GITHUB_BUTTON_ID)) {
+                window.open(GITHUB_URL, '_blank');
+            } else if (ray.intersectsId(_BottomToolbar.STAR_BUTTON_ID)) {
+                window.open(STARS_URL, '_blank');
             }
         }
     }, {
@@ -295,7 +326,7 @@ var App = exports.App = function (_Component) {
         key: 'onKeyUp',
         value: function onKeyUp(ray) {
             if (ray.e.key === 'Escape') {
-                // close dialog
+                // close the popup
                 this.setState({
                     popupVisible: false
                 });
@@ -355,7 +386,8 @@ var App = exports.App = function (_Component) {
                 index++;
                 return circle;
             }),
-                popup = this.state.popupVisible && _react2.default.createElement(_Popup2.default, null);
+                popup = this.state.popupVisible === _AboutPopup.ABOUT_POPUP_ID && _react2.default.createElement(_AboutPopup2.default, null) || this.state.popupVisible === _ExamplePopup.EXAMPLE_POPUP_ID && _react2.default.createElement(_ExamplePopup2.default, null),
+                cursorOverlay = this.state.mouseIsDown && this.state.draggedCircleIndex > -1 && _react2.default.createElement(_CursorOverlay2.default, null);
 
             return _react2.default.createElement(
                 'div',
@@ -372,7 +404,8 @@ var App = exports.App = function (_Component) {
                     _react2.default.createElement(_TextRotator2.default, null),
                     popup
                 ),
-                _react2.default.createElement(_BottomToolbar2.default, null)
+                _react2.default.createElement(_BottomToolbar2.default, null),
+                cursorOverlay
             );
         }
     }, {

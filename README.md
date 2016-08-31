@@ -2,55 +2,55 @@
 
 [![NPM](https://badge.fury.io/js/raycast-dom.png)](https://www.npmjs.com/package/raycast-dom)
 
-# Raycast DOM #
+# Raycast #
 
 *Raycast* is a publish/subscribe event framework based on emitting rays to user interface.
 It makes *event bubbling* a first class citizen of modern web application development.
 
-It's based around this simple idea:
+It's based around a simple idea:
 
 A point of contact between user and UI is a glass surface (screen), usually having a single point of contact (single pixel).
 Therefore, there MUST be a 1:1 relation between user gestures and application state changes.
-This means that all the gestures *could* be processed at central place.
+This means that all the gestures could be processed at central place.
 
 There are scenarios where scattering event handlers throughout the application is not convenient.
 For instance, when building a component having huge number of interactive children (grids, trees, menus).
 This is where you may find this framework handy.
 
-[![Raycast DOM!](http://dankokozar.com/images/raycast-dom.png)](http://dkozar.github.io/raycast-dom/)
+[![Raycast!](http://dankokozar.com/images/raycast-dom.png)](http://dkozar.github.io/raycast-dom/)
 
 ## Javascript libraries and Raycast ##
 
 Raycast is not tied to any of the libraries; it can be used with any web application framework.
 
-Modern web application frameworks (like [React](https://facebook.github.io/react/)) encourage the single point of gesture processing.
+Modern web application frameworks (like [React](https://facebook.github.io/react/)) encourage a single point of gesture processing.
 This is accomplished by having a (single) store, with application root subscribing to store changes.
 The state is being changed by actions, fired by components.
 
-Raycast is also encouraging this concept.
-However, instead of using different actions to update the store, we're emitting rays which are being processed by the application root (and other interested parties).
-Application becomes just a *view* with single responsibility of rendering itself at different states.
-With Raycast, there's no need for components to subscribe to events and process them, nor to fire any actions.
+Raycast also encourages this concept.
+However, instead using different actions to update the store, we're emitting rays which are being processed by the application root (and other interested parties).
+Application becomes just a *view* with single responsibility of rendering itself in different states.
+With Raycast, there's no need of components subscribing to events and process them, nor firing any actions.
 This leads to much simpler component design and better decoupling.
 
 ## Rays ##
 
-Since GUI elements are layered (having parent-child relationship), *touching* a piece of user interface is, in essence, a 3D concept.
+Since GUI elements are layered (having a parent-child relationship), *touching* a piece of user interface is - in essence - a 3D concept.
 It's much like raycasting in 3D computer games, where fired ray intersects multiple game objects.
-Just like with game objects, all the intersections between the Ray and GUI layers are important.
+Just like with game objects, all the intersections between the Ray and GUI layers are important for gesture analysis.
 
-A single Ray contains all the intersection information.
+A single Ray contains all intersection information.
 This information is then being processed by subscribers, which are usually located near the application root.
-This eliminates the need of having a "chain" of components, where each component in the chain is passing handler references to its children.
+This eliminates the need for having a "chain" of components, where each component in the chain is passing handler references to its children.
 
 ## Event bubbling and parent chain ##
 
 In essence, the information provided by Ray is a type of "condensed event bubbling information".
-The difference is that, unlike "walking the DOM" both ways (as event bubbling does) and triggering event handlers on elements, all Ray intersections are passed to subscriber(s) at once.
+The difference is that, unlike *walking the DOM* both ways (as event bubbling does) and triggering event handlers on elements, all Ray intersections are passed to subscriber(s) at once.
 Subscriber then makes sense of Ray information by analyzing it.
 
 Personally, I became aware of the importance of event-bubbling information while I was [working on eDriven.Gui](https://github.com/dkozar/edriven-gui/blob/master/eDriven/eDriven.Gui/Util/GuiEventProcessor.cs)
-I was recreating the parent chain upon each user interaction (by "walking the DOM"); this never resulted in any performance degradations.
+I was recreating the parent chain upon each user interaction (by *walking the DOM*) and this never resulted in any performance degradations.
 
 Back to the browser. When having a reference to DOM element, constructing parent chain is easy.
 Browser calculates the parent chain for us, providing parentNode property for each DOM node (each event also provides the *path* property, which holds the parent chain information). 
@@ -59,21 +59,22 @@ Browser calculates the parent chain for us, providing parentNode property for ea
 
 Emitter is a singleton subscribing to *document* and *window* objects.
 It's building Rays and dispatching them to interested parties.
-Emitter subscription is based on Signals and slots pattern [I used quite a lot with eDriven](https://github.com/dkozar/edriven/blob/master/eDriven.Core/Signals/Signal.cs).
+Emitter subscription is based on Signals and slots pattern I used [quite a lot with eDriven](https://github.com/dkozar/edriven/blob/master/eDriven.Core/Signals/Signal.cs).
 Interested parties connect to emitter passing an object with handler references, that will be fired by Emitter (with Ray as an argument).
-This approach is handy because connect/disconnect methods are called once per subscriber (py passing all the handlers at once).
+This approach is handy because connect/disconnect methods are called once per subscriber (passing all handlers at once).
 
 ## Plugs ##
 
 Plugs are custom emitters, built by component or application developers, and then plugged into Emitter.
 They are converting *raw* Emitter events to something more meaningful to particular components.
+The idea behind this is that there should be no duplicated work (converting browser events to rays).
 While I was working on [react-data-menu](https://github.com/dkozar/react-data-menu), I became aware that not only menu component is interested in menu events.
 That's why it's handy to have a source of *converted* events being accessible and reused by interested parties.
 I've been already using the concept of [parent/slave dispatchers](https://github.com/dkozar/edriven/blob/master/eDriven.Core/Managers/SystemManager.cs), which turned out to be very practical.
 
 ## Storeless/actionless applications ##
 
-With Raycast, it is possible to create an application with no store nor actions.
+With Raycast, it is possible to create an application having no store nor actions.
 However, having all the code in application root would make our application unmaintainable.
 That's why I suggest decoupling ray processors from application root.
 For this, you can use composition, having *processor* objects referencing the application component.
@@ -82,21 +83,24 @@ Note: Since Raycast demos are tiny, I'll keep ray handlers inside the applicatio
 
 ## Raycast Prerequisites: ##
 
-1. Decoration
-   Each *interactive* element in the application should be decorated with unique ID or className.
+1. Decoration: Each *interactive* element in the application should be decorated with unique ID or className.
    This requires a bit of discipline. I suggest keeping ID prefixes as constants accessible by both rendering classes and Emitter subscribers.
 
 # Raycast pros and cons #
 
 ## Pros: ##
 
-1. When component is detached from parent document, the *isAttached()* method of Ray returns false.
-   Rays "detached" from the document are not emitted by default.
+1. When component is detached from parent document, the *isAttached* method of Ray returns false.
+   Rays "detached" from the document are not emitted.
    This means that our handlers are never called by pieces of UI currently not being on screen.
    This prevents the "component not mounted" type of errors.
    
-2. Event bubbling as a concept is hard to grasp, even by top programmers.
+2. Event bubbling as a concept is hard to grasp, even to top programmers.
    Rays and intersections with GUI layers are much easier to visualise and to code against.
+   
+3. Moving a piece of UI from one place in the application to another shouldn't change anything from event processing point.
+   This means less friction when there are (late) design changes to your application.
+   With *classic* React, moving a single button from one place to another means rewriting the handler logic, as well as rewriting tests. 
 
 ## Cons: ##
 
@@ -105,9 +109,11 @@ Note: Since Raycast demos are tiny, I'll keep ray handlers inside the applicatio
    With React we could use IDs generated by React (data-reactid), however I found it not to be so clean.
 
 2. Unit testing is not so straightforward if tested component doesn't handle Emitter subscription by itself.
-   Integration tests of components handling Emitter subscription internally are simple.
-   For instance, my menu system is internally subscribed to Emitter. From the outside it doesn't make any difference.
-   Note: When testing the (singleton) Emitter, we might want to spy on its methods.
+   Integration tests of components having internal Emitter subscription are simple.
+   For instance, my [menu system](https://github.com/dkozar/react-data-menu) is internally subscribed to Emitter.
+   From the outside this doesn't make any difference compared to *classic* React components.
+   
+   Tip: When testing the (singleton) Emitter, we might want to spy on its methods.
    
 ## :tv: Demo
 

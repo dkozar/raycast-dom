@@ -4,11 +4,12 @@ import WrappyText from 'react-wrappy-text';
 const texts = [
     'This is the Raycast demo.',
     'Home of the circles.',
-    'Click the circle to bring it to top.',
+    'Click the circle to bring it to the top.',
     'Click the background to create new circle.',
-    'Shift + click = clear screen.',
-    'Alt + click + mouse move = new circle.',
-    '"Clear screen" button removes all the circles.',
+    'Click and drag the circle to move all the circles.',
+    'Shift + click = clear screen',
+    'Alt + click + mouse move = new circle',
+    '"Clear" button removes all the circles.',
     '"New circle" button creates the circle at last click position.'
 ];
 
