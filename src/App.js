@@ -313,9 +313,9 @@ export class App extends Component {
                         {circles}
                     </Svg>
                     <TextRotator />
-                    {popup}
                 </div>
                 <BottomToolbar />
+                {popup}
                 {cursorOverlay}
             </div>
         );

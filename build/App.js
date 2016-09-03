@@ -401,10 +401,10 @@ var App = exports.App = function (_Component) {
                         { width: '100%', height: '100%' },
                         circles
                     ),
-                    _react2.default.createElement(_TextRotator2.default, null),
-                    popup
+                    _react2.default.createElement(_TextRotator2.default, null)
                 ),
                 _react2.default.createElement(_BottomToolbar2.default, null),
+                popup,
                 cursorOverlay
             );
         }
