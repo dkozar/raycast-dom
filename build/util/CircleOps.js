@@ -12,6 +12,10 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 var _colors = require('./colors');
 
+var _viewportUtil = require('./viewportUtil');
+
+var _viewportUtil2 = _interopRequireDefault(_viewportUtil);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33,6 +37,22 @@ function newCircle(position, circles, yOrigin) {
         color = _colors.COLORS[Math.floor(Math.random() * _colors.COLORS.length)],
         circle = {
         x: position.x, y: position.y - yOrigin, r: r, color: color
+    };
+
+    circles.push(circle);
+}
+
+function randomCircle(circles, yOrigin) {
+    var viewportRect = _viewportUtil2.default.getRect(),
+        x = Math.floor(Math.random() * viewportRect.width),
+        y = Math.floor(Math.random() * viewportRect.height),
+        r = Math.floor(Math.random() * 150) + 50,
+        color = _colors.COLORS[Math.floor(Math.random() * _colors.COLORS.length)],
+        circle = {
+        x: x,
+        y: y - yOrigin,
+        r: r,
+        color: color
     };
 
     circles.push(circle);
@@ -100,6 +120,9 @@ var CircleOps = function () {
                     break;
                 case 'new-circle':
                     newCircle(position, circles, TOOLBAR_HEIGHT);
+                    break;
+                case 'random-circle':
+                    randomCircle(circles, TOOLBAR_HEIGHT);
                     break;
                 case 'remove-circle':
                     removeCircle(circles, current);

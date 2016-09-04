@@ -1,6 +1,6 @@
 {
   "name": "raycast-dom",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Event framework based on emitting rays onto the user interface",
   "scripts": {
     "hot": "node hotServer.js",
@@ -59,14 +59,16 @@
     "karma-mocha": "^0.2.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.7.0",
+    "less": "^2.7.1",
+    "less-loader": "^2.2.3",
     "mocha": "^2.4.5",
+    "react": "^0.14.3",
     "react-addons-test-utils": "^0.14.7",
+    "react-dom": "^0.14.3",
+    "react-liberator": "^1.0.12",
     "react-wrappy-text": "^1.0.7",
     "rimraf": "^2.4.3",
     "style-loader": "^0.13.0",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-liberator": "^1.0.12",
     "webpack": "^1.12.9",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-hot-middleware": "^2.6.0"

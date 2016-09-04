@@ -16,7 +16,7 @@ import WrappyText from 'react-wrappy-text';
 
 import { BLUE, YELLOW, PURPLE } from './util/colors';
 
-require('./styles/main.css');
+require('./styles/main.less');
 
 const GITHUB_URL = 'https://github.com/dkozar/raycast-dom',
       STARS_URL = GITHUB_URL + '/stargazers';
@@ -108,7 +108,8 @@ export class App extends Component {
             circle, circleId, circleIndex;
 
         this.setState({ // immediately reset cursor overlay
-            mouseIsDown: true
+            mouseIsDown: true,
+            isTouch
         });
 
         if (this.state.popupVisible) { // popup is visible
@@ -237,7 +238,7 @@ export class App extends Component {
         var self = this;
 
         if (ray.intersectsId(NEW_BUTTON_ID)) {
-            self.executeCommand('new-circle');
+            self.executeCommand('random-circle');
         } else if (ray.intersectsId(CLEAR_BUTTON_ID)) {
             self.executeCommand('clear');
         } else if (ray.intersectsId(OPEN_BUTTON_ID)) {
@@ -323,7 +324,7 @@ export class App extends Component {
             ) || this.state.popupVisible === EXAMPLE_POPUP_ID && (
                     <ExamplePopup />
                 ),
-            cursorOverlay = this.state.mouseIsDown && this.state.draggedCircleIndex > -1 && (
+            cursorOverlay = this.state.mouseIsDown && !this.state.isTouch && this.state.draggedCircleIndex > -1 && (
                 <CursorOverlay />
             );
 

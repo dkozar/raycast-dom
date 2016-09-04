@@ -77,11 +77,11 @@ var AboutPopup = function (_Component) {
                             _react2.default.createElement(
                                 'p',
                                 null,
-                                'It is a proof of concept that one could build relative complex apps using Raycast, without using any of the "classic" React event handlers.'
+                                'It is a proof of concept that one could build relatively complex apps using Raycast, without using any of the "classic" React event handlers.'
                             ),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'popup-dialog-content-last' },
+                                { className: 'popup-dialog-content-quote' },
                                 'To see the code, please visit the project page on GitHub.'
                             )
                         ),

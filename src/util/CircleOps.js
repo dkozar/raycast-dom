@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { COLORS } from './colors';
+import ViewportUtil from './viewportUtil';
 
 const TOOLBAR_HEIGHT = 0;
 
@@ -18,6 +19,22 @@ function newCircle(position, circles, yOrigin) {
         color = COLORS[Math.floor(Math.random() * COLORS.length)],
         circle = {
             x: position.x, y: position.y - yOrigin, r, color
+        };
+
+    circles.push(circle);
+}
+
+function randomCircle(circles, yOrigin) {
+    var viewportRect = ViewportUtil.getRect(),
+        x = Math.floor(Math.random() * viewportRect.width),
+        y = Math.floor(Math.random() * viewportRect.height),
+        r = Math.floor(Math.random() * 150) + 50,
+        color = COLORS[Math.floor(Math.random() * COLORS.length)],
+        circle = {
+            x,
+            y: y - yOrigin,
+            r,
+            color
         };
 
     circles.push(circle);
@@ -78,6 +95,9 @@ export default class CircleOps {
                 break;
             case 'new-circle':
                 newCircle(position, circles, TOOLBAR_HEIGHT);
+                break;
+            case 'random-circle':
+                randomCircle(circles, TOOLBAR_HEIGHT);
                 break;
             case 'remove-circle':
                 removeCircle(circles, current);

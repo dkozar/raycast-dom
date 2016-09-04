@@ -77,7 +77,7 @@ var ExamplePopup = function (_Component) {
                             ),
                             _react2.default.createElement(
                                 'p',
-                                null,
+                                { className: 'popup-dialog-content-quote' },
                                 '[ with rays, it\'s easy to test an element against clicking outside ]'
                             )
                         ),

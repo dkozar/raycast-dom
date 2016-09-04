@@ -19,7 +19,7 @@ export default class ExamplePopup extends Component {
                                 <li>Clicking outside this popup will close it.</li>
                                 <li>Clicking inside will keep it open.</li>
                             </ul>
-                            <p>[ with rays, it's easy to test an element against clicking outside ]</p>
+                            <p className='popup-dialog-content-quote'>[ with rays, it's easy to test an element against clicking outside ]</p>
                         </div>
                         <div className='popup-dialog-footer'>
                             <button className='toolbar-button' id={CLOSE_BUTTON_ID}><span className="fa fa-close"></span>&nbsp;&nbsp;Close</button>

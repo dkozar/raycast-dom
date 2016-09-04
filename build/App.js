@@ -75,7 +75,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-require('./styles/main.css');
+require('./styles/main.less');
 
 var GITHUB_URL = 'https://github.com/dkozar/raycast-dom',
     STARS_URL = GITHUB_URL + '/stargazers';
@@ -178,7 +178,8 @@ var App = exports.App = function (_Component) {
                 circleIndex;
 
             this.setState({ // immediately reset cursor overlay
-                mouseIsDown: true
+                mouseIsDown: true,
+                isTouch: isTouch
             });
 
             if (this.state.popupVisible) {
@@ -326,7 +327,7 @@ var App = exports.App = function (_Component) {
             var self = this;
 
             if (ray.intersectsId(_BottomToolbar.NEW_BUTTON_ID)) {
-                self.executeCommand('new-circle');
+                self.executeCommand('random-circle');
             } else if (ray.intersectsId(_BottomToolbar.CLEAR_BUTTON_ID)) {
                 self.executeCommand('clear');
             } else if (ray.intersectsId(_BottomToolbar.OPEN_BUTTON_ID)) {
@@ -419,7 +420,7 @@ var App = exports.App = function (_Component) {
                 return circle;
             }),
                 popup = this.state.popupVisible === _AboutPopup.ABOUT_POPUP_ID && _react2.default.createElement(_AboutPopup2.default, null) || this.state.popupVisible === _ExamplePopup.EXAMPLE_POPUP_ID && _react2.default.createElement(_ExamplePopup2.default, null),
-                cursorOverlay = this.state.mouseIsDown && this.state.draggedCircleIndex > -1 && _react2.default.createElement(_CursorOverlay2.default, null);
+                cursorOverlay = this.state.mouseIsDown && !this.state.isTouch && this.state.draggedCircleIndex > -1 && _react2.default.createElement(_CursorOverlay2.default, null);
 
             return _react2.default.createElement(
                 'div',

@@ -16,8 +16,8 @@ export default class AboutPopup extends Component {
                         <WrappyText className='popup-dialog-header'>About</WrappyText>
                         <div className='popup-dialog-content'>
                             <p>This demo was built using <a href='https://facebook.github.io/react/' target={'_blank'}>ReactJS</a> and <a href='https://github.com/dkozar/raycast-dom' target={'_blank'}>Raycast</a>.</p>
-                            <p>It is a proof of concept that one could build relative complex apps using Raycast, without using any of the "classic" React event handlers.</p>
-                            <p className='popup-dialog-content-last'>To see the code, please visit the project page on GitHub.</p>
+                            <p>It is a proof of concept that one could build relatively complex apps using Raycast, without using any of the "classic" React event handlers.</p>
+                            <p className='popup-dialog-content-quote'>To see the code, please visit the project page on GitHub.</p>
                         </div>
                         <div className='popup-dialog-footer'>
                             <button className='toolbar-button' id={GITHUB_BUTTON_ID}><span className="fa fa-github-alt"></span>&nbsp;&nbsp;Go to GitHub</button>
