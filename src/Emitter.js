@@ -15,6 +15,7 @@ const ON_MOUSE_OVER = ['mouseover', 'onMouseOver'],
     ON_CONTEXT_MENU = ['contextmenu', 'onContextMenu'],
     ON_TOUCH_START = ['touchstart', 'onTouchStart'],
     ON_TOUCH_END = ['touchend', 'onTouchEnd'],
+    ON_TOUCH_MOVE = ['touchmove', 'onTouchMove'],
     ON_TOUCH_CANCEL = ['touchcancel', 'onTouchCancel'],
     ON_CHANGE = ['change', 'onChange'],
     ON_INPUT = ['input', 'onInput'],
@@ -67,6 +68,7 @@ export default class Emitter extends EmitterBase {
         this[ON_CONTEXT_MENU[1]] = _.bind(this.createRayAndEmit, this, ON_CONTEXT_MENU[1], document);
         this[ON_TOUCH_START[1]] = _.bind(this.createRayAndEmit, this, ON_TOUCH_START[1], document);
         this[ON_TOUCH_END[1]] = _.bind(this.createRayAndEmit, this, ON_TOUCH_END[1], document);
+        this[ON_TOUCH_MOVE[1]] = _.bind(this.createRayAndEmit, this, ON_TOUCH_MOVE[1], document);
         this[ON_TOUCH_CANCEL[1]] = _.bind(this.createRayAndEmit, this, ON_TOUCH_CANCEL[1], document);
         this[ON_MOUSE_OVER[1]] = _.bind(this.createRayAndEmit, this, ON_MOUSE_OVER[1], document);
         this[ON_MOUSE_OVER[1]] = _.bind(this.createRayAndEmit, this, ON_MOUSE_OVER[1], document);
@@ -110,6 +112,7 @@ export default class Emitter extends EmitterBase {
         document.body.addEventListener(ON_CONTEXT_MENU[0], this[ON_CONTEXT_MENU[1]], false);
         document.body.addEventListener(ON_TOUCH_START[0], this[ON_TOUCH_START[1]], false);
         document.body.addEventListener(ON_TOUCH_END[0], this[ON_TOUCH_END[1]], false);
+        document.body.addEventListener(ON_TOUCH_MOVE[0], this[ON_TOUCH_MOVE[1]], false);
         document.body.addEventListener(ON_TOUCH_CANCEL[0], this[ON_TOUCH_CANCEL[1]], false);
         document.body.addEventListener(ON_CHANGE[0], this[ON_CHANGE[1]], false);
         document.body.addEventListener(ON_INPUT[0], this[ON_INPUT[1]], false);
@@ -138,6 +141,7 @@ export default class Emitter extends EmitterBase {
         document.body.removeEventListener(ON_CONTEXT_MENU[0], this[ON_CONTEXT_MENU[1]]);
         document.body.removeEventListener(ON_TOUCH_START[0], this[ON_TOUCH_START[1]]);
         document.body.removeEventListener(ON_TOUCH_END[0], this[ON_TOUCH_END[1]]);
+        document.body.removeEventListener(ON_TOUCH_MOVE[0], this[ON_TOUCH_MOVE[1]]);
         document.body.removeEventListener(ON_TOUCH_CANCEL[0], this[ON_TOUCH_CANCEL[1]]);
         document.body.removeEventListener(ON_CHANGE[0], this[ON_CHANGE[1]]);
         document.body.removeEventListener(ON_INPUT[0], this[ON_INPUT[1]]);

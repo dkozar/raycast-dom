@@ -70,7 +70,8 @@ export class App extends Component {
             onKeyDown: this.onKeyDown.bind(this), // stop dragging
             onKeyUp: this.onKeyUp.bind(this), // closing dialog
             onTouchStart: this.onTouchStart.bind(this), // new circle
-            onTouchEnd: this.onTouchEnd.bind(this)
+            onTouchEnd: this.onTouchEnd.bind(this),
+            onTouchMove: this.onTouchMove.bind(this)
         });
     }
     //</editor-fold>
@@ -101,6 +102,7 @@ export class App extends Component {
         }
     }
 
+    //<editor-fold desc="Mouse/touch down">
     handleMouseOrTouchDown(ray, isTouch) {
         var self = this,
             circle, circleId, circleIndex;
@@ -129,7 +131,7 @@ export class App extends Component {
             circleIndex = parseInt(circleId.split(CIRCLE_ID_PREFIX)[1]);
             this.setState({
                 selectedCircleIndex: circleIndex,
-                draggedCircleIndex: isTouch ? -1 : circleIndex,
+                draggedCircleIndex: circleIndex,
                 dragOrigin: ray.position
             }, function() {
                 self.executeCommand('bring-to-front');
@@ -165,8 +167,10 @@ export class App extends Component {
         };
         this.handleMouseOrTouchDown(ray, true);
     }
+    //</editor-fold>
 
-    onMouseUp() {
+    //<editor-fold desc="Mouse/touch up">
+    handleMouseOrTouchUp(ray, isTouch) {
         if (this.state.delta) {
             // save positions
             CircleOps.executeCommand('move', this.state.circles, null, this.state.delta);
@@ -178,15 +182,17 @@ export class App extends Component {
         });
     }
 
-    onTouchEnd(ray) {
-        this.setState({
-            mouseIsDown: false,
-            draggedCircleIndex: -1,
-            delta: null
-        });
+    onMouseUp(ray) {
+        this.handleMouseOrTouchUp(ray);
     }
 
-    onMouseMove(ray) {
+    onTouchEnd(ray) {
+        this.handleMouseOrTouchUp(ray, true);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Mouse/touch move">
+    handleMouseOrTouchMove(ray, isTouch) {
         var self = this,
             position = ray.position;
 
@@ -194,7 +200,7 @@ export class App extends Component {
             return; // nothing to do here
         }
 
-        if (ray.e.altKey && ray.intersects(rootNode)) { // Alt + mouse move = new circle
+        if (!isTouch && ray.e.altKey && ray.intersects(rootNode)) { // Alt + mouse move = new circle
             this.setState({
                 mousePosition: position
             }, function() {
@@ -210,6 +216,22 @@ export class App extends Component {
             });
         }
     }
+
+    onMouseMove(ray) {
+        this.handleMouseOrTouchMove(ray);
+    }
+
+    onTouchMove(ray) {
+        var touch = ray.e.changedTouches[0];
+
+        ray.position = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+        this.handleMouseOrTouchMove(ray, true);
+        ray.preventDefault(); // don't bounce the screen on iOS
+    }
+    //</editor-fold>
 
     onClick(ray) {
         var self = this;

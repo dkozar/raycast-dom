@@ -39,6 +39,7 @@ var ON_MOUSE_OVER = ['mouseover', 'onMouseOver'],
     ON_CONTEXT_MENU = ['contextmenu', 'onContextMenu'],
     ON_TOUCH_START = ['touchstart', 'onTouchStart'],
     ON_TOUCH_END = ['touchend', 'onTouchEnd'],
+    ON_TOUCH_MOVE = ['touchmove', 'onTouchMove'],
     ON_TOUCH_CANCEL = ['touchcancel', 'onTouchCancel'],
     ON_CHANGE = ['change', 'onChange'],
     ON_INPUT = ['input', 'onInput'],
@@ -102,6 +103,7 @@ var Emitter = function (_EmitterBase) {
         _this[ON_CONTEXT_MENU[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_CONTEXT_MENU[1], document);
         _this[ON_TOUCH_START[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_TOUCH_START[1], document);
         _this[ON_TOUCH_END[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_TOUCH_END[1], document);
+        _this[ON_TOUCH_MOVE[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_TOUCH_MOVE[1], document);
         _this[ON_TOUCH_CANCEL[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_TOUCH_CANCEL[1], document);
         _this[ON_MOUSE_OVER[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_MOUSE_OVER[1], document);
         _this[ON_MOUSE_OVER[1]] = _lodash2.default.bind(_this.createRayAndEmit, _this, ON_MOUSE_OVER[1], document);
@@ -151,6 +153,7 @@ var Emitter = function (_EmitterBase) {
             document.body.addEventListener(ON_CONTEXT_MENU[0], this[ON_CONTEXT_MENU[1]], false);
             document.body.addEventListener(ON_TOUCH_START[0], this[ON_TOUCH_START[1]], false);
             document.body.addEventListener(ON_TOUCH_END[0], this[ON_TOUCH_END[1]], false);
+            document.body.addEventListener(ON_TOUCH_MOVE[0], this[ON_TOUCH_MOVE[1]], false);
             document.body.addEventListener(ON_TOUCH_CANCEL[0], this[ON_TOUCH_CANCEL[1]], false);
             document.body.addEventListener(ON_CHANGE[0], this[ON_CHANGE[1]], false);
             document.body.addEventListener(ON_INPUT[0], this[ON_INPUT[1]], false);
@@ -180,6 +183,7 @@ var Emitter = function (_EmitterBase) {
             document.body.removeEventListener(ON_CONTEXT_MENU[0], this[ON_CONTEXT_MENU[1]]);
             document.body.removeEventListener(ON_TOUCH_START[0], this[ON_TOUCH_START[1]]);
             document.body.removeEventListener(ON_TOUCH_END[0], this[ON_TOUCH_END[1]]);
+            document.body.removeEventListener(ON_TOUCH_MOVE[0], this[ON_TOUCH_MOVE[1]]);
             document.body.removeEventListener(ON_TOUCH_CANCEL[0], this[ON_TOUCH_CANCEL[1]]);
             document.body.removeEventListener(ON_CHANGE[0], this[ON_CHANGE[1]]);
             document.body.removeEventListener(ON_INPUT[0], this[ON_INPUT[1]]);
