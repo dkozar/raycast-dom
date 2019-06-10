@@ -17,7 +17,7 @@ There are scenarios where scattering event handlers throughout the application i
 For instance, when building a component having huge number of interactive children (grids, trees, menus).
 This is where you may find this framework handy.
 
-[![Raycast!](http://dankokozar.com/images/raycast-dom.png)](http://dkozar.github.io/raycast-dom/)
+[![Raycast!](./images/raycast-dom.png)](http://dkozar.github.io/raycast-dom/)
 
 ## Javascript libraries and Raycast ##
 
