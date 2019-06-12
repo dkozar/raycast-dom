@@ -19,6 +19,10 @@ This is where you may find this framework handy.
 
 [![Raycast!](./images/raycast-dom.png)](http://dkozar.github.io/raycast-dom/)
 
+## :tv: Demo
+
+http://dkozar.github.io/raycast-dom/
+
 ## Javascript libraries and Raycast ##
 
 Raycast is not tied to any of the libraries; it can be used with any web application framework.
@@ -115,10 +119,6 @@ Note: Since Raycast demos are tiny, I'll keep ray handlers inside the applicatio
    
    Tip: When testing the (singleton) Emitter, we might want to spy on its methods.
    
-## :tv: Demo
-
-http://dkozar.github.io/raycast-dom/
-
 ## :zap: Usage
 
 ### Circles example ###

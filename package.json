@@ -1,6 +1,6 @@
 {
   "name": "raycast-dom",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Event framework based on emitting rays onto the user interface",
   "scripts": {
     "hot": "node hotServer.js",
